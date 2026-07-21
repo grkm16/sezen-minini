@@ -1,0 +1,2221 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fff8fb" />
+  <meta name="description" content="Sezen için hazırlanmış beş günlük tatlı mini plan." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Minik Planım" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+
+  <title>Sezenimin Minnik Bebbeksi Planı 💗</title>
+
+  <style>
+    :root {
+      --bg: #fff8fb;
+      --card: rgba(255, 255, 255, 0.92);
+      --text: #40353f;
+      --muted: #9b8e98;
+      --pink: #ff86ad;
+      --pink-dark: #c6537a;
+      --pink-soft: #ffe3ec;
+      --green: #7bcf9a;
+      --green-soft: #e4f8eb;
+      --green-dark: #2f8d59;
+      --border: #f4dce5;
+      --shadow: 0 18px 45px rgba(175, 113, 138, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      color: var(--text);
+      font-family: ui-rounded, "SF Pro Rounded", "Nunito", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(255, 185, 209, 0.34), transparent 32%),
+        radial-gradient(circle at 90% 20%, rgba(181, 235, 204, 0.35), transparent 28%),
+        linear-gradient(180deg, #fff7fb 0%, #fffdfd 100%);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    .floating-heart {
+      position: fixed;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      animation: float 7s ease-in-out infinite;
+    }
+
+    .music-toggle {
+      position: fixed;
+      z-index: 20;
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(14px, env(safe-area-inset-bottom));
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border: 1px solid rgba(255, 134, 173, 0.22);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--pink-dark);
+      font-size: 17px;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(139, 82, 106, 0.13);
+      backdrop-filter: blur(10px);
+      opacity: 0.72;
+      transition: opacity 0.18s ease, transform 0.18s ease, background 0.18s ease;
+    }
+
+    .music-toggle:active {
+      transform: scale(0.91);
+    }
+
+    .music-toggle:hover,
+    .music-toggle:focus-visible {
+      opacity: 1;
+    }
+
+    .music-toggle.paused {
+      background: rgba(255, 255, 255, 0.66);
+      color: #a9949e;
+    }
+
+    .heart-1 { top: 8%; left: 7%; font-size: 24px; }
+    .heart-2 { top: 18%; right: 8%; font-size: 18px; animation-delay: -2s; }
+    .heart-3 { bottom: 18%; left: 9%; font-size: 16px; animation-delay: -4s; }
+    .heart-4 { bottom: 8%; right: 10%; font-size: 26px; animation-delay: -1s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50% { transform: translateY(-12px) rotate(4deg); }
+    }
+
+    .app {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 520px);
+      margin: 0 auto;
+      padding: max(24px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-badge,
+    .install-button {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      backdrop-filter: blur(10px);
+    }
+
+    .mini-badge {
+      border: 1px solid rgba(255, 134, 173, 0.22);
+      background: rgba(255, 255, 255, 0.74);
+      color: #c35f83;
+      box-shadow: 0 8px 24px rgba(194, 94, 131, 0.08);
+    }
+
+    .install-button {
+      border: 1px solid rgba(107, 192, 139, 0.28);
+      background: rgba(231, 250, 238, 0.9);
+      color: #438261;
+      cursor: pointer;
+    }
+
+    .install-button[hidden] {
+      display: none;
+    }
+
+    h1 {
+      margin: 14px 0 8px;
+      font-size: clamp(28px, 8vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0 auto;
+      max-width: 340px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .days-card,
+    .tasks-card {
+      border: 1px solid rgba(244, 220, 229, 0.9);
+      border-radius: 28px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .days-card {
+      padding: 14px;
+    }
+
+    .days {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .day-button {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      background: white;
+      padding: 12px 4px 11px;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .day-button:active {
+      transform: scale(0.96);
+    }
+
+    .day-button .day-name {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .day-button .day-number {
+      display: block;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .day-button .day-month {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .day-button.today {
+      border-color: rgba(68, 160, 104, 0.35);
+      background: linear-gradient(160deg, #8fe0ac, #6fc691);
+      color: white;
+      box-shadow: 0 10px 24px rgba(92, 180, 125, 0.26);
+    }
+
+    .day-button.today .day-name,
+    .day-button.today .day-month {
+      color: rgba(255, 255, 255, 0.88);
+    }
+
+    .day-button.selected:not(.today) {
+      border-color: rgba(255, 134, 173, 0.54);
+      background: var(--pink-soft);
+      box-shadow: 0 9px 22px rgba(255, 134, 173, 0.15);
+    }
+
+    .day-button.today.selected {
+      outline: 3px solid rgba(255, 255, 255, 0.82);
+      outline-offset: -5px;
+    }
+
+    .day-button.locked {
+      position: relative;
+      border-color: #eee4e8;
+      background: rgba(250, 247, 249, 0.88);
+      color: #b9aeb4;
+      box-shadow: none;
+    }
+
+    .day-button.locked .day-name,
+    .day-button.locked .day-month {
+      color: #c8bec3;
+    }
+
+    .day-button.locked::after {
+      content: "🔒";
+      position: absolute;
+      top: -6px;
+      right: -4px;
+      display: grid;
+      width: 20px;
+      height: 20px;
+      place-items: center;
+      border: 2px solid white;
+      border-radius: 50%;
+      background: #f6eaf0;
+      font-size: 10px;
+      box-shadow: 0 5px 12px rgba(113, 77, 94, 0.12);
+    }
+
+    .day-button.locked:active {
+      transform: scale(0.96);
+    }
+
+    .today-hint {
+      margin: 12px 2px 0;
+      text-align: center;
+      color: #6f9f80;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .tasks-card {
+      margin-top: 16px;
+      padding: 18px;
+      min-height: 280px;
+    }
+
+    .empty-state {
+      display: grid;
+      min-height: 240px;
+      place-items: center;
+      padding: 26px;
+      text-align: center;
+    }
+
+    .empty-emoji {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 48px;
+      animation: tinyBounce 2.4s ease-in-out infinite;
+    }
+
+    @keyframes tinyBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
+    }
+
+    .empty-state strong {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 17px;
+    }
+
+    .empty-state p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .tasks-content[hidden] {
+      display: none;
+    }
+
+    .photo-card {
+      position: relative;
+      margin-bottom: 18px;
+      overflow: hidden;
+      border: 1px solid #f3dde6;
+      border-radius: 23px;
+      background: #fff2f7;
+      aspect-ratio: 4 / 3;
+      box-shadow: 0 12px 28px rgba(141, 92, 111, 0.11);
+      cursor: zoom-in;
+    }
+
+    .photo-card::after {
+      content: "⌕";
+      position: absolute;
+      top: 11px;
+      right: 11px;
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.48);
+      border-radius: 50%;
+      background: rgba(35, 22, 30, 0.38);
+      color: white;
+      font-size: 21px;
+      font-weight: 900;
+      pointer-events: none;
+      backdrop-filter: blur(7px);
+    }
+
+    .photo-viewer {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 58px 14px 86px;
+      background: rgba(12, 8, 11, 0.92);
+      backdrop-filter: blur(9px);
+    }
+
+    .photo-viewer[hidden] {
+      display: none;
+    }
+
+    .photo-viewer-stage {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    .photo-viewer-image {
+      display: block;
+      max-width: 94vw;
+      max-height: 78dvh;
+      object-fit: contain;
+      border-radius: 17px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+      transform: scale(1);
+      transform-origin: center;
+      transition: transform 0.2s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .photo-viewer-close {
+      position: absolute;
+      z-index: 102;
+      top: max(15px, env(safe-area-inset-top));
+      right: max(15px, env(safe-area-inset-right));
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+
+    .photo-viewer-controls {
+      position: absolute;
+      z-index: 102;
+      right: 0;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      left: 0;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .photo-zoom-button {
+      display: grid;
+      min-width: 48px;
+      height: 44px;
+      place-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      font-size: 22px;
+      font-weight: 900;
+      cursor: pointer;
+      pointer-events: auto;
+      backdrop-filter: blur(9px);
+    }
+
+    .photo-zoom-button.reset {
+      min-width: 72px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .day-photo {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: photoSway 5s ease-in-out infinite;
+      transform: scale(1.025);
+    }
+
+    @keyframes photoSway {
+      0%, 100% { transform: scale(1.025) rotate(-0.35deg); }
+      50% { transform: scale(1.055) rotate(0.35deg); }
+    }
+
+    .photo-shade {
+      position: absolute;
+      inset: auto 0 0;
+      height: 42%;
+      pointer-events: none;
+      background: linear-gradient(transparent, rgba(49, 26, 38, 0.46));
+    }
+
+    .photo-caption {
+      position: absolute;
+      right: 13px;
+      bottom: 12px;
+      left: 13px;
+      color: white;
+      font-size: 12px;
+      font-weight: 900;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .photo-fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 20px;
+      text-align: center;
+      color: #a8617b;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.5;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255,255,255,.65), transparent 23%),
+        linear-gradient(145deg, #ffe5ef, #eaf8ef);
+    }
+
+    .photo-card.missing .day-photo,
+    .photo-card.missing .photo-shade,
+    .photo-card.missing .photo-caption {
+      display: none;
+    }
+
+    .photo-card.missing .photo-fallback {
+      display: grid;
+    }
+
+    .mood-card {
+      margin-bottom: 18px;
+      padding: 15px;
+      border: 1px solid #f1e1e7;
+      border-radius: 21px;
+      background: linear-gradient(145deg, rgba(255, 246, 250, 0.95), rgba(246, 255, 249, 0.96));
+    }
+
+    .section-kicker {
+      margin: 0 0 4px;
+      color: var(--pink-dark);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mood-title {
+      margin: 0 0 12px;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .mood-options {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .mood-button {
+      min-width: 0;
+      border: 1px solid #f0dfe6;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.88);
+      padding: 8px 2px 7px;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .mood-button:active {
+      transform: scale(0.94);
+    }
+
+    .mood-button.selected {
+      border-color: rgba(255, 134, 173, 0.55);
+      background: var(--pink-soft);
+      transform: translateY(-2px);
+      box-shadow: 0 7px 16px rgba(203, 89, 129, 0.12);
+    }
+
+    .mood-emoji {
+      display: block;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .mood-label {
+      display: block;
+      margin-top: 4px;
+      overflow: hidden;
+      color: #8b7984;
+      font-size: 8px;
+      font-weight: 900;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mood-note {
+      display: none;
+      margin: 12px 0 0;
+      border-radius: 14px;
+      padding: 10px 11px;
+      background: rgba(255, 255, 255, 0.86);
+      color: #806f79;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+
+    .mood-note.show {
+      display: block;
+      animation: popIn 0.28s ease;
+    }
+
+    .tasks-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 15px;
+    }
+
+    .tasks-header h2 {
+      margin: 0 0 5px;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .selected-date {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .progress-bubble {
+      flex: 0 0 auto;
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      border: 1px solid rgba(255, 134, 173, 0.26);
+      border-radius: 50%;
+      background: var(--pink-soft);
+      color: #c95d82;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .progress-track {
+      height: 8px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #f6edf1;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #ff9abb, #7bcf9a);
+      transition: width 0.35s ease;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .task-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      overflow: hidden;
+      border: 1px solid #f0e2e8;
+      border-radius: 18px;
+      background: white;
+      color: var(--text);
+      box-shadow: 0 7px 18px rgba(105, 74, 88, 0.055);
+      transition: transform 0.18s ease, background 0.22s ease, border-color 0.22s ease;
+    }
+
+    .task-item:active {
+      transform: scale(0.988);
+    }
+
+    .task-toggle {
+      min-width: 0;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 0;
+      background: transparent;
+      padding: 13px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .check-circle {
+      position: relative;
+      flex: 0 0 auto;
+      width: 26px;
+      height: 26px;
+      border: 2px solid #e7d7de;
+      border-radius: 50%;
+      background: #fff;
+      transition: all 0.22s ease;
+    }
+
+    .check-circle::after {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 3px;
+      width: 6px;
+      height: 11px;
+      border-right: 2px solid white;
+      border-bottom: 2px solid white;
+      opacity: 0;
+      transform: rotate(45deg) scale(0.6);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .task-text {
+      min-width: 0;
+      flex: 1;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
+      transition: color 0.22s ease;
+    }
+
+    .task-link {
+      flex: 0 0 auto;
+      display: grid;
+      width: 42px;
+      height: 42px;
+      margin-right: 7px;
+      place-items: center;
+      border: 1px solid rgba(255, 134, 173, 0.18);
+      border-radius: 14px;
+      background: var(--pink-soft);
+      color: var(--pink-dark);
+      font-size: 19px;
+      font-weight: 950;
+      text-decoration: none;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .task-link:active {
+      transform: scale(0.9);
+    }
+
+    .task-item.done {
+      border-color: rgba(91, 182, 126, 0.34);
+      background: var(--green-soft);
+    }
+
+    .task-item.done .check-circle {
+      border-color: var(--green);
+      background: var(--green);
+    }
+
+    .task-item.done .check-circle::after {
+      opacity: 1;
+      transform: rotate(45deg) scale(1);
+    }
+
+    .task-item.done .task-text {
+      color: var(--green-dark);
+      text-decoration: line-through;
+      text-decoration-color: rgba(47, 141, 89, 0.5);
+      text-decoration-thickness: 2px;
+    }
+
+    .task-item.done .task-link {
+      border-color: rgba(47, 141, 89, 0.17);
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--green-dark);
+    }
+
+    .completion-reveal {
+      display: none;
+      width: 100%;
+      margin-top: 15px;
+      border: 1px solid rgba(255, 134, 173, 0.32);
+      border-radius: 17px;
+      background: linear-gradient(135deg, #fff0f6, #eefaf2);
+      padding: 12px 14px;
+      color: #bd5479;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    .completion-reveal.show {
+      display: block;
+      animation: popIn 0.35s ease;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(7px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .footer-note {
+      margin: 18px 0 0;
+      text-align: center;
+      color: #b3a5ae;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 50;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: 18px;
+      background: rgba(62, 38, 52, 0.38);
+      backdrop-filter: blur(9px);
+    }
+
+    .modal-backdrop[hidden] {
+      display: none;
+    }
+
+    .effect-layer {
+      position: fixed;
+      z-index: 80;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .note-modal {
+      position: relative;
+      z-index: 52;
+      width: min(100%, 390px);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      border-radius: 29px;
+      background: rgba(255, 251, 253, 0.96);
+      padding: 27px 22px 22px;
+      text-align: center;
+      box-shadow: 0 28px 80px rgba(72, 37, 54, 0.28);
+      animation: modalPop 0.48s cubic-bezier(.2, .9, .25, 1.2);
+    }
+
+    @keyframes modalPop {
+      from { opacity: 0; transform: translateY(24px) scale(0.88) rotate(-2deg); }
+      to { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 11px;
+      right: 11px;
+      display: grid;
+      width: 35px;
+      height: 35px;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: #f7eaf0;
+      color: #a87184;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .surprise-icon {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 49px;
+      animation: tinyBounce 1.7s ease-in-out infinite;
+    }
+
+    .note-modal h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      letter-spacing: -0.035em;
+    }
+
+    .special-note {
+      margin: 0;
+      color: #76636e;
+      font-size: 14px;
+      font-weight: 750;
+      line-height: 1.65;
+    }
+
+    .modal-ok {
+      width: 100%;
+      margin-top: 19px;
+      border: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ff8fb4, #76cb98);
+      padding: 12px 15px;
+      color: white;
+      font-size: 13px;
+      font-weight: 950;
+      cursor: pointer;
+      box-shadow: 0 10px 23px rgba(202, 94, 132, 0.19);
+    }
+
+    .install-help-text {
+      margin: 0;
+      color: #76636e;
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.65;
+      white-space: pre-line;
+    }
+
+    .startup-mood-intro {
+      margin: 0 0 15px;
+      color: #806f79;
+      font-size: 13px;
+      font-weight: 750;
+      line-height: 1.55;
+    }
+
+    .startup-mood-options {
+      margin-top: 4px;
+    }
+
+    .startup-mood-note {
+      margin-top: 14px;
+      text-align: left;
+    }
+
+    .startup-mood-continue[hidden] {
+      display: none;
+    }
+
+    .fall-particle {
+      position: absolute;
+      top: -12vh;
+      left: var(--left);
+      font-size: var(--size);
+      opacity: 0;
+      filter: drop-shadow(0 5px 5px rgba(116, 60, 87, 0.12));
+      animation: particleFall var(--duration) linear var(--delay) forwards;
+    }
+
+    @keyframes particleFall {
+      0% { opacity: 0; transform: translate3d(0, -8vh, 0) rotate(0deg); }
+      10% { opacity: 1; }
+      100% { opacity: 0.9; transform: translate3d(var(--drift), 118vh, 0) rotate(var(--rotate)); }
+    }
+
+    .burst-star {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      font-size: var(--size);
+      opacity: 0;
+      animation: starBurst 1.7s ease-out var(--delay) forwards;
+    }
+
+    @keyframes starBurst {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.15) rotate(0); }
+      18% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform:
+          translate(calc(-50% + var(--x)), calc(-50% + var(--y)))
+          scale(1.25)
+          rotate(var(--rotate));
+      }
+    }
+
+    .bubble-particle {
+      position: absolute;
+      bottom: -14vh;
+      left: var(--left);
+      font-size: var(--size);
+      opacity: 0;
+      animation: bubbleRise var(--duration) ease-in var(--delay) forwards;
+    }
+
+    @keyframes bubbleRise {
+      0% { opacity: 0; transform: translateY(0) scale(0.5); }
+      15% { opacity: 0.85; }
+      100% { opacity: 0; transform: translate3d(var(--drift), -120vh, 0) scale(1.2); }
+    }
+
+    .cat-effect {
+      position: absolute;
+      right: 0;
+      bottom: 3%;
+      left: 0;
+      text-align: center;
+      animation: catEntrance 3.4s ease forwards;
+    }
+
+    .cat-face {
+      display: inline-block;
+      font-size: clamp(88px, 28vw, 145px);
+      filter: drop-shadow(0 18px 18px rgba(79, 42, 62, 0.2));
+      animation: catWiggle 0.72s ease-in-out 4;
+    }
+
+    .cat-hearts {
+      display: block;
+      margin-top: -24px;
+      font-size: 31px;
+      letter-spacing: 12px;
+      animation: tinyBounce 0.8s ease-in-out infinite;
+    }
+
+    @keyframes catEntrance {
+      0% { opacity: 0; transform: translateY(110%) scale(0.65); }
+      22%, 75% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(12%) scale(0.92); }
+    }
+
+    @keyframes catWiggle {
+      0%, 100% { transform: rotate(-4deg); }
+      50% { transform: rotate(4deg); }
+    }
+
+    @media (min-width: 480px) {
+      .app {
+        padding-right: 22px;
+        padding-left: 22px;
+      }
+
+      .day-button {
+        padding-top: 14px;
+        padding-bottom: 13px;
+      }
+
+      .task-toggle {
+        padding: 14px;
+      }
+
+      .mood-label {
+        font-size: 9px;
+      }
+    }
+
+    @media (max-width: 365px) {
+      .mood-options {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .mood-label {
+        font-size: 9px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!--
+    Müzik dosyanı proje içinde şu konuma koy:
+    music/background-music.mp3
+  -->
+  <audio
+    id="backgroundMusic"
+    src="music/background-music.mp3"
+    loop
+    preload="auto"
+  ></audio>
+
+  <button
+    class="music-toggle paused"
+    id="musicToggle"
+    type="button"
+    aria-label="Arka plan müziğini aç"
+    title="Müziği aç"
+  >♪</button>
+
+  <span class="floating-heart heart-1">♡</span>
+  <span class="floating-heart heart-2">♥</span>
+  <span class="floating-heart heart-3">♡</span>
+  <span class="floating-heart heart-4">♥</span>
+
+  <main class="app">
+    <header class="hero">
+      <div class="hero-top">
+        <div class="mini-badge">💌 SEZEN BEBEK İÇİN</div>
+        <button class="install-button" id="installButton" type="button" hidden>
+          ＋ Ana ekrana ekle
+        </button>
+      </div>
+
+      <h1>Minnik Bebeksi Planım</h1>
+      <p class="subtitle">
+        Bugünün minik işlerini seç, yaptıkça üzerlerine dokun.
+        Hepsinin bitirmeden uyumak yasak güzelim. ✨
+      </p>
+    </header>
+
+    <section class="days-card" aria-label="Beş günlük plan">
+      <div class="days" id="days"></div>
+    </section>
+
+    <section class="tasks-card">
+      <div class="empty-state" id="emptyState">
+        <div>
+          <span class="empty-emoji">💗</span>
+          <strong>Bir güne dokun</strong>
+        </div>
+      </div>
+
+      <div class="tasks-content" id="tasksContent" hidden>
+        <div class="photo-card" id="photoCard">
+          <img class="day-photo" id="dayPhoto" src="" alt="" />
+          <div class="photo-shade"></div>
+          <div class="photo-caption" id="photoCaption"></div>
+          <div class="photo-fallback" id="photoFallback"></div>
+        </div>
+
+
+        <div class="tasks-header">
+          <div>
+            <h2 id="dayTitle">Bugünün minikleri</h2>
+            <p class="selected-date" id="selectedDate"></p>
+          </div>
+          <div class="progress-bubble" id="progressText">0/0</div>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="task-list" id="taskList"></div>
+
+        <button class="completion-reveal" id="completionReveal" type="button">
+          💌 Sürpriz notunu tekrar aç
+        </button>
+      </div>
+    </section>
+
+    <p class="footer-note">Aşkından sana kucak dolusu sevgiyle ♡</p>
+  </main>
+
+  <div class="modal-backdrop" id="celebrationModal" hidden>
+    <div class="effect-layer" id="effectLayer" aria-hidden="true"></div>
+
+    <section class="note-modal" role="dialog" aria-modal="true" aria-labelledby="surpriseTitle">
+      <button class="modal-close" id="closeCelebration" type="button" aria-label="Kapat">×</button>
+      <span class="surprise-icon" id="surpriseIcon">💌</span>
+      <h3 id="surpriseTitle">Bugünün sürprizi</h3>
+      <p class="special-note" id="specialNote"></p>
+      <button class="modal-ok" id="celebrationOk" type="button">Kalbim benim 💗</button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="installModal" hidden>
+    <section class="note-modal" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+      <button class="modal-close" id="closeInstall" type="button" aria-label="Kapat">×</button>
+      <span class="surprise-icon">📲</span>
+      <h3 id="installTitle">Ana ekrana ekle</h3>
+      <p class="install-help-text" id="installHelpText"></p>
+      <button class="modal-ok" id="installOk" type="button">Tamam bebi sağ ol</button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="startupMoodModal" hidden>
+    <section class="note-modal" role="dialog" aria-modal="true" aria-labelledby="startupMoodTitle">
+      <span class="surprise-icon" id="startupMoodIcon">💗</span>
+      <h3 id="startupMoodTitle">Bugün nasılsın güzelim?</h3>
+      <p class="startup-mood-intro">
+        Minini bebeği olmadan önce şu an nasıl hissettiğini söyle:
+      </p>
+      <div class="mood-options startup-mood-options" id="startupMoodOptions"></div>
+      <p class="mood-note startup-mood-note" id="startupMoodNote" aria-live="polite"></p>
+      <button class="modal-ok startup-mood-continue" id="startupMoodContinue" type="button" hidden>
+        Bugüne başlayalım 💗
+      </button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="lockedDayModal" hidden>
+    <section class="note-modal" role="dialog" aria-modal="true" aria-labelledby="lockedDayTitle">
+      <span class="surprise-icon">🔒</span>
+      <h3 id="lockedDayTitle">Daha zamanı gelmedi</h3>
+      <p class="special-note">
+        Güzel deneme küçük tabşan ama bu görevlere erişmek için sabretmen gerekiyor. 🐰💗
+      </p>
+      <button class="modal-ok" id="lockedDayOk" type="button">Tamam, sabredicem 🥺</button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="dayFourPhotoMessageModal" hidden>
+    <section class="note-modal" role="dialog" aria-modal="true" aria-labelledby="dayFourPhotoMessageTitle">
+      <button class="modal-close" id="closeDayFourPhotoMessage" type="button" aria-label="Kapat">×</button>
+      <span class="surprise-icon">🥺💗</span>
+      <h3 id="dayFourPhotoMessageTitle">Bu fotoğrafı neden koydum?</h3>
+      <p class="special-note">
+        evet şimdi diceksin ki ben burda hiç makyajım yok niye bu fotoyu koydun. ben de sana dicem ki sen her halinle güzelsin, fotoğrafımızın güzel olması için makyaja ihityacın yok. ikimizi tatlı buldum ve onun için koydum...
+      </p>
+      <button class="modal-ok" id="showDayFourPhoto" type="button">Fotoğrafımızı göster 💗</button>
+    </section>
+  </div>
+
+  <div class="photo-viewer" id="photoViewer" hidden>
+    <button class="photo-viewer-close" id="closePhotoViewer" type="button" aria-label="Fotoğrafı kapat">×</button>
+    <div class="photo-viewer-stage" id="photoViewerStage">
+      <img class="photo-viewer-image" id="photoViewerImage" src="" alt="" />
+    </div>
+    <div class="photo-viewer-controls">
+      <button class="photo-zoom-button" id="photoZoomOut" type="button" aria-label="Uzaklaştır">−</button>
+      <button class="photo-zoom-button reset" id="photoZoomReset" type="button">Sıfırla</button>
+      <button class="photo-zoom-button" id="photoZoomIn" type="button" aria-label="Yakınlaştır">＋</button>
+    </div>
+  </div>
+
+  <script>
+    /*
+      BAŞLANGIÇ TARİHİ:
+      JavaScript'te ay değeri 0'dan başlar. Temmuz = 6.
+    */
+    const PLAN_START_DATE = new Date(2026, 6, 21);
+
+    /*
+      TEST MODU:
+      Site adresinin sonuna ?test=1 eklersen gelecekteki günler de açılır.
+      Normal kullanımda gelecek günler kilitli kalır.
+    */
+    const TEST_MODE = new URLSearchParams(window.location.search).get("test") === "1";
+
+    /*
+      EN ÇOK DÜZENLEYECEĞİN BÖLÜM BURASI:
+
+      photo:
+        Her güne ait fotoğraf dosyası. Kendi fotoğraflarını images klasörüne
+        day-1.jpg, day-2.jpg... adıyla koyarsan başka hiçbir şeyi değiştirmen gerekmez.
+
+      surpriseNote:
+        Tüm görevler tamamlandığında açılan özel mesaj.
+
+      animation:
+        Kullanılabilen türler: "hearts", "stars", "cat", "flowers", "bubbles"
+
+      tasks:
+        text görev metni.
+        url boşsa link butonu görünmez.
+        Link eklemek için örnek:
+        { text: "Bu şarkıyı dinle 🎧", url: "https://open.spotify.com/..." }
+    */
+    const planData = [
+      {
+        photo: "images/day-1.jpg",
+        photoCaption: "Birinci günümüz için minik bir kare 💗",
+        surpriseNote: "Bugünün bütün minik işlerini bitirdin. Seninle gurur duyuyorum bebeğim. Bu çalışkanlığın beni her gün daha da etkiliyor 💗",
+        animation: "hearts",
+        tasks: [
+          { text: "Seni uyuttum ve uyuyakaldığın için muhtemelen bu görevlere yarın erişeceksin ondan bu görevleri de yarın yap. 😚", url: "" },
+          { text: "Hemen yerinden fırla ve 2 bardak su iç 💧 (1 değil 2 bak kendine gel)", url: "" },
+          { text: "Uygulamayı ana ekranına ekle ve kankalarına göster ", url: "" },
+          { text: "Dişlerini fırçala 🦷", url: "" }
+        ]
+      },
+      {
+        photo: "images/day-2.jpg",
+        photoCaption: "İkinci gün, bebiyle yan yana ✨",
+        surpriseNote: "Bugün de sana iyi gelecek şeyler yaptın. Sen benim 1 numaralı biricik neşe kaynağımsın... 😘",
+        animation: "stars",
+        tasks: [
+          { text: "Güzelce bir kahvaltını yap 🥚", url: "" },
+          { text: "2 bardak su iç 💧", url: "" },
+          { text: "Akşam 20.00 den sonra bana bir öpücük fotosu at 😽", url: "" },
+          { text: "En az 15 dakika bisiklet sür", url: "" },
+          { text: "Bebiyle 2 el dude oynayın kazanan kaybedene dondurma ısmarlasın 🎮🍦", url: "" },
+          { text: "Bana bisiklet sürerken kısa bir video at (videoda konuşmayı ihmal etme)", url: "" },
+          { text: "Bu linkten ilk 2 dersi iyice oku ve ezberle 📝", url: "https://chatgpt.com/share/6a58b86c-52ac-83eb-80ba-0f2d54531505" }
+        ]
+      },
+      {
+        photo: "images/day-3.jpg",
+        photoCaption: "Üçüncü günün en tatlı anısı 💞",
+        surpriseNote: "Liste bitti ama seni sevmem bitmedi, kötü haber. 😌 Bugünün de üstesinden geldin; şimdi dinlen ve dünyanın en tatlı insanı olduğunu unutma.",
+        animation: "cat",
+        tasks: [
+          { text: "Güzelce bir kahvaltını yap 🍞", url: "" },
+          { text: "Bugün toplamda en az 6 bardak su iç 💧💧💧💧💧💧", url: "" },
+          { text: "Dağınık eşyan varsa topla 🎀 (Eğer yoksa aşkını ara seni tebrik etsin)", url: "" },
+          { text: "Saat 14.58 den önce bu görevi gör ve görür görmez kalkıp 1 bardak su iç 💦", url: "" },
+          { text: "Akşama doğru en az 15-20 dklık bir yürüyüşe çık 🚶🏻‍♀️", url: "" },
+          { text: "Yürüyüşte bu şarkıyı dinle 🎶", url: "https://music.youtube.com/watch?v=9BKZG74kM3E&si=OwUk-p_kEcVSzw3J" },
+          { text: "Bu linkten 3. ve 4. dersleri oku 📚", url: "" }
+        ]
+      },
+      {
+        photo: "images/day-4.jpg",
+        photoCaption: "Dördüncü gün için bir güzellik 🌷",
+        surpriseNote: "Bugün çiçekler senin için açtı diyelim; bilimsel kanıtım yok ama kalbim çok emin. Her şeyi tamamladığın için seninle gurur duyuyorum. 🌸",
+        animation: "flowers",
+        tasks: [
+          { text: "Tatlış tatlış makyajını yap ve bebine foto at 💄", url: "" },
+          { text: "Kahvaltını ihmal etme 🍳🍳", url: "" },
+          { text: "Annene bir işte yardım et 🤝", url: "" },
+          { text: "Sadece 10 squad yap 🤸🏻", url: "" },
+          { text: "Bu müziği dinle 🎵", url: "https://music.youtube.com/watch?v=BzEEF4wb4Mo&si=TMHYau2kTjWWhNOw" },
+          { text: "Bir meyve veya sevdiğin atıştırmalıktan ye 🍓", url: "" },
+          { text: "Bu linkten 5. ve 6. dersleri oku 📒", url: "https://chatgpt.com/share/6a58b86c-52ac-83eb-80ba-0f2d54531505" }
+        ]
+      },
+      {
+        photo: "images/day-5.jpg",
+        photoCaption: "Beşinci gün: Bizim zamanımız 🫧",
+        surpriseNote: "Beş günü de tamamladın! Senin o güzel azmine, güzelliğine ve o tatlılığına, masum kalbine her gün tekrar tekrar aşık oluyorum. Bu görevleri bitiermiş olmanın asıl gerçek ödülü benim sana sarılmam; ilk fırsatta teslim edilecek. 💞",
+        animation: "bubbles",
+        tasks: [
+          { text: "Kahvaltı et güzel güzel 🍳", url: "" },
+          { text: "1 bardak su iç 💦", url: "" },
+          { text: "10 mekik çek, 1 dakika dinlen, 10 tane daha çek, 2 dakika dinlen 10 squad çek 1 dakika dinlen 10 tane daha çek", url: "" },
+          { text: "Duşa gir 🚿", url: "" },
+          { text: "Bebeğinin yıl dönümünü kutla 🌷", url: "" },
+          { text: "Bu linkten 7. ve 8. dersleri oku 🗒️", url: "https://chatgpt.com/share/6a58b86c-52ac-83eb-80ba-0f2d54531505" },
+          { text: "En sevdiğin insana onu mutlu edecek birkaç cümle yaz ve gönder 💌", url: "" },
+          { text: "Beş günü tamamladığın için kendini kutla 🎉", url: "" },
+          { text: "Ve son olarak, yatağına geçip uyumadan hemen önce bu kutucuğu işaretle 💤🛌🏻", url: "" }
+        ]
+      }
+    ];
+
+    const moodOptions = [
+      {
+        id: "happy",
+        emoji: "😊",
+        label: "Mutlu",
+        note: "O güzel enerjin bugün her yere bulaşsın. Gülüşünü sakın eksik etme. 💛"
+      },
+      {
+        id: "energetic",
+        emoji: "⚡",
+        label: "Enerjik",
+        note: "Bugün seni kimse tutamaz! Enerjini güzel şeylere harca, süper kız. ✨"
+      },
+      {
+        id: "calm",
+        emoji: "😌",
+        label: "Sakin",
+        note: "Bu huzuru koru; bugün acele etmeden, kendi güzel ritminde ilerle. 🌿"
+      },
+      {
+        id: "tired",
+        emoji: "🥱",
+        label: "Yorgun",
+        note: "Her şeyi bugün halletmek zorunda değilsin. Biraz yavaşla ve kendine iyi bak. 🧸"
+      },
+      {
+        id: "sad",
+        emoji: "🥺",
+        label: "Üzgün",
+        note: "Bugün zor geliyorsa yalnız değilsin. Ben buradayım ve seni her hâlinle çok seviyorum. 💗"
+      },
+      {
+        id: "stressed",
+        emoji: "😵‍💫",
+        label: "Stresli",
+        note: "Derin bir nefes al güzelim. Her şeyi tek seferde değil, minicik adımlarla çözeceğiz. 🌸"
+      }
+    ];
+
+    const STORAGE_KEY = "sezen-minik-plan-v2";
+    const LEGACY_STORAGE_KEY = "sezen-minik-plan-v1";
+
+    const turkishDaysShort = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
+    const turkishDaysLong = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+    const turkishMonths = [
+      "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+      "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+    ];
+
+    const daysContainer = document.getElementById("days");
+    const emptyState = document.getElementById("emptyState");
+    const tasksContent = document.getElementById("tasksContent");
+    const taskList = document.getElementById("taskList");
+    const dayTitle = document.getElementById("dayTitle");
+    const selectedDate = document.getElementById("selectedDate");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+    const todayHint = document.getElementById("todayHint");
+
+    const photoCard = document.getElementById("photoCard");
+    const dayPhoto = document.getElementById("dayPhoto");
+    const photoCaption = document.getElementById("photoCaption");
+    const photoFallback = document.getElementById("photoFallback");
+
+    const completionReveal = document.getElementById("completionReveal");
+    const celebrationModal = document.getElementById("celebrationModal");
+    const effectLayer = document.getElementById("effectLayer");
+    const specialNote = document.getElementById("specialNote");
+    const surpriseIcon = document.getElementById("surpriseIcon");
+    const closeCelebration = document.getElementById("closeCelebration");
+    const celebrationOk = document.getElementById("celebrationOk");
+
+    const installButton = document.getElementById("installButton");
+    const installModal = document.getElementById("installModal");
+    const installHelpText = document.getElementById("installHelpText");
+    const closeInstall = document.getElementById("closeInstall");
+    const installOk = document.getElementById("installOk");
+
+    const startupMoodModal = document.getElementById("startupMoodModal");
+    const startupMoodOptions = document.getElementById("startupMoodOptions");
+    const startupMoodNote = document.getElementById("startupMoodNote");
+    const startupMoodIcon = document.getElementById("startupMoodIcon");
+    const startupMoodContinue = document.getElementById("startupMoodContinue");
+
+    const lockedDayModal = document.getElementById("lockedDayModal");
+    const lockedDayOk = document.getElementById("lockedDayOk");
+
+    const dayFourPhotoMessageModal = document.getElementById("dayFourPhotoMessageModal");
+    const closeDayFourPhotoMessage = document.getElementById("closeDayFourPhotoMessage");
+    const showDayFourPhoto = document.getElementById("showDayFourPhoto");
+
+    const photoViewer = document.getElementById("photoViewer");
+    const photoViewerStage = document.getElementById("photoViewerStage");
+    const photoViewerImage = document.getElementById("photoViewerImage");
+    const closePhotoViewer = document.getElementById("closePhotoViewer");
+    const photoZoomIn = document.getElementById("photoZoomIn");
+    const photoZoomOut = document.getElementById("photoZoomOut");
+    const photoZoomReset = document.getElementById("photoZoomReset");
+
+    const backgroundMusic = document.getElementById("backgroundMusic");
+    const musicToggle = document.getElementById("musicToggle");
+    const MUSIC_PREFERENCE_KEY = "sezen-background-music-enabled";
+    const TARGET_MUSIC_VOLUME = 0.08;
+
+    let selectedDayIndex = null;
+    let deferredInstallPrompt = null;
+    let appState = loadState();
+    let effectTimeout = null;
+
+    let musicEnabled = localStorage.getItem(MUSIC_PREFERENCE_KEY) !== "false";
+    let musicFadeFrame = null;
+
+    backgroundMusic.volume = 0;
+    updateMusicButton();
+
+    function updateMusicButton() {
+      const isPlaying = musicEnabled && !backgroundMusic.paused;
+
+      musicToggle.textContent = isPlaying ? "♫" : "♪";
+      musicToggle.classList.toggle("paused", !isPlaying);
+      musicToggle.setAttribute(
+        "aria-label",
+        isPlaying ? "Arka plan müziğini kapat" : "Arka plan müziğini aç"
+      );
+      musicToggle.title = isPlaying ? "Müziği kapat" : "Müziği aç";
+    }
+
+    function fadeMusicIn() {
+      if (musicFadeFrame) {
+        cancelAnimationFrame(musicFadeFrame);
+      }
+
+      const startVolume = backgroundMusic.volume;
+      const startTime = performance.now();
+      const duration = 1500;
+
+      function step(currentTime) {
+        if (!musicEnabled || backgroundMusic.paused) {
+          return;
+        }
+
+        const progress = Math.min((currentTime - startTime) / duration, 1);
+        backgroundMusic.volume =
+          startVolume + (TARGET_MUSIC_VOLUME - startVolume) * progress;
+
+        if (progress < 1) {
+          musicFadeFrame = requestAnimationFrame(step);
+        }
+      }
+
+      musicFadeFrame = requestAnimationFrame(step);
+    }
+
+    async function tryStartBackgroundMusic() {
+      if (!musicEnabled || !backgroundMusic.paused) {
+        updateMusicButton();
+        return;
+      }
+
+      try {
+        backgroundMusic.volume = 0;
+        await backgroundMusic.play();
+        fadeMusicIn();
+      } catch (error) {
+        // Mobil tarayıcılar ilk kullanıcı dokunuşuna kadar oynatmayı engelleyebilir.
+      }
+
+      updateMusicButton();
+    }
+
+    function stopBackgroundMusic() {
+      if (musicFadeFrame) {
+        cancelAnimationFrame(musicFadeFrame);
+        musicFadeFrame = null;
+      }
+
+      backgroundMusic.pause();
+      backgroundMusic.volume = 0;
+      updateMusicButton();
+    }
+
+    musicToggle.addEventListener("click", async event => {
+      event.stopPropagation();
+
+      if (musicEnabled && !backgroundMusic.paused) {
+        musicEnabled = false;
+        localStorage.setItem(MUSIC_PREFERENCE_KEY, "false");
+        stopBackgroundMusic();
+        return;
+      }
+
+      musicEnabled = true;
+      localStorage.setItem(MUSIC_PREFERENCE_KEY, "true");
+      await tryStartBackgroundMusic();
+    });
+
+    backgroundMusic.addEventListener("play", updateMusicButton);
+    backgroundMusic.addEventListener("pause", updateMusicButton);
+    backgroundMusic.addEventListener("error", () => {
+      console.warn(
+        "Arka plan müziği bulunamadı. music/background-music.mp3 dosyasını ekle."
+      );
+      updateMusicButton();
+    });
+
+    function startMusicOnFirstInteraction() {
+      tryStartBackgroundMusic();
+    }
+
+    document.addEventListener("pointerdown", startMusicOnFirstInteraction, {
+      once: true
+    });
+
+    document.addEventListener("keydown", startMusicOnFirstInteraction, {
+      once: true
+    });
+
+    function loadState() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (saved && saved.completed && saved.moods) {
+          return saved;
+        }
+
+        const legacy = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY));
+        if (legacy && typeof legacy === "object") {
+          return {
+            completed: legacy,
+            moods: {}
+          };
+        }
+      } catch (error) {
+        console.warn("Kayıt okunamadı:", error);
+      }
+
+      return {
+        completed: {},
+        moods: {}
+      };
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (error) {
+        console.warn("Kayıt yapılamadı:", error);
+      }
+    }
+
+    function normalizeDate(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function getDateForIndex(index) {
+      const date = new Date(PLAN_START_DATE);
+      date.setDate(PLAN_START_DATE.getDate() + index);
+      return date;
+    }
+
+    function sameDay(dateA, dateB) {
+      return normalizeDate(dateA).getTime() === normalizeDate(dateB).getTime();
+    }
+
+    function dateKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function escapeHtml(text) {
+      return String(text).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[character]);
+    }
+
+    function isSafeLink(url) {
+      if (!url || typeof url !== "string") return false;
+
+      try {
+        const parsed = new URL(url, window.location.href);
+        return ["http:", "https:", "mailto:", "tel:"].includes(parsed.protocol);
+      } catch {
+        return false;
+      }
+    }
+
+    function renderDays() {
+      daysContainer.innerHTML = "";
+      const today = new Date();
+      let todayExistsInPlan = false;
+
+      for (let index = 0; index < planData.length; index++) {
+        const date = getDateForIndex(index);
+        const isToday = sameDay(date, today);
+        const isFuture =
+          !TEST_MODE &&
+          normalizeDate(date).getTime() > normalizeDate(today).getTime();
+
+        if (isToday) {
+          todayExistsInPlan = true;
+        }
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "day-button";
+        button.setAttribute(
+          "aria-label",
+          `${turkishDaysLong[date.getDay()]} ${date.getDate()} ${turkishMonths[date.getMonth()]}`
+        );
+
+        if (isToday) button.classList.add("today");
+        if (isFuture) button.classList.add("locked");
+        if (selectedDayIndex === index && !isFuture) button.classList.add("selected");
+
+        button.innerHTML = `
+          <span class="day-name">${turkishDaysShort[date.getDay()]}</span>
+          <span class="day-number">${date.getDate()}</span>
+          <span class="day-month">${turkishMonths[date.getMonth()].slice(0, 3)}</span>
+        `;
+
+        button.addEventListener("click", () => {
+          tryStartBackgroundMusic();
+
+          if (isFuture) {
+            openLockedDayModal();
+            return;
+          }
+
+          selectDay(index);
+        });
+
+        daysContainer.appendChild(button);
+      }
+
+      if (todayHint) {
+        if (todayExistsInPlan) {
+          todayHint.textContent = "Yeşil olan kutu bugün 🌿";
+          todayHint.style.color = "#6f9f80";
+        } else {
+          todayHint.textContent = "Beş günlük planın hazır 🌷";
+          todayHint.style.color = "#b18495";
+        }
+      }
+    }
+
+    function openLockedDayModal() {
+      lockedDayModal.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function closeLockedDayModal() {
+      lockedDayModal.hidden = true;
+      document.body.classList.remove("modal-open");
+    }
+
+    lockedDayOk.addEventListener("click", closeLockedDayModal);
+
+    lockedDayModal.addEventListener("click", event => {
+      if (event.target === lockedDayModal) {
+        closeLockedDayModal();
+      }
+    });
+
+    function selectDay(index) {
+      selectedDayIndex = index;
+      renderDays();
+      renderDayContent();
+    }
+
+    function renderDayContent() {
+      const date = getDateForIndex(selectedDayIndex);
+      const key = dateKey(date);
+      const day = planData[selectedDayIndex];
+      const completed = appState.completed[key] || [];
+
+      emptyState.hidden = true;
+      tasksContent.hidden = false;
+
+      renderPhoto(day, date);
+
+      const isToday = sameDay(date, new Date());
+      dayTitle.textContent = isToday
+        ? "Bugünün minikleri"
+        : `${turkishDaysLong[date.getDay()]} planı`;
+
+      selectedDate.textContent = `${date.getDate()} ${turkishMonths[date.getMonth()]} ${date.getFullYear()}`;
+      taskList.innerHTML = "";
+
+      day.tasks.forEach((task, taskIndex) => {
+        const isDone = completed.includes(taskIndex);
+
+        const taskItem = document.createElement("div");
+        taskItem.className = `task-item${isDone ? " done" : ""}`;
+
+        const taskToggle = document.createElement("button");
+        taskToggle.type = "button";
+        taskToggle.className = "task-toggle";
+        taskToggle.setAttribute("aria-pressed", String(isDone));
+        taskToggle.innerHTML = `
+          <span class="check-circle" aria-hidden="true"></span>
+          <span class="task-text">${escapeHtml(task.text)}</span>
+        `;
+
+        taskToggle.addEventListener("click", () => toggleTask(key, taskIndex));
+        taskItem.appendChild(taskToggle);
+
+        if (isSafeLink(task.url)) {
+          const taskLink = document.createElement("a");
+          taskLink.className = "task-link";
+          taskLink.href = task.url;
+          taskLink.target = "_blank";
+          taskLink.rel = "noopener noreferrer";
+          taskLink.setAttribute("aria-label", `${task.text} bağlantısını aç`);
+          taskLink.title = "Bağlantıyı aç";
+          taskLink.textContent = "↗";
+          taskItem.appendChild(taskLink);
+        }
+
+        taskList.appendChild(taskItem);
+      });
+
+      updateProgress(day.tasks.length, completed.length);
+    }
+
+    let photoZoomLevel = 1;
+    let lastPhotoTapTime = 0;
+
+    function updatePhotoZoom() {
+      photoViewerImage.style.transform = `scale(${photoZoomLevel})`;
+      photoZoomOut.disabled = photoZoomLevel <= 1;
+      photoZoomIn.disabled = photoZoomLevel >= 4;
+    }
+
+    function setPhotoZoom(nextZoom) {
+      photoZoomLevel = Math.min(4, Math.max(1, nextZoom));
+      updatePhotoZoom();
+    }
+
+    function openPhotoViewer() {
+      if (!dayPhoto.src || photoCard.classList.contains("missing")) return;
+
+      photoViewerImage.src = dayPhoto.currentSrc || dayPhoto.src;
+      photoViewerImage.alt = dayPhoto.alt;
+      setPhotoZoom(1);
+      photoViewer.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function closePhotoViewerModal() {
+      photoViewer.hidden = true;
+      photoViewerImage.src = "";
+      setPhotoZoom(1);
+      document.body.classList.remove("modal-open");
+    }
+
+    function openDayFourPhotoMessage() {
+      dayFourPhotoMessageModal.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function closeDayFourPhotoMessageModal() {
+      dayFourPhotoMessageModal.hidden = true;
+      document.body.classList.remove("modal-open");
+    }
+
+    function handlePhotoOpen() {
+      tryStartBackgroundMusic();
+
+      if (selectedDayIndex === 3) {
+        openDayFourPhotoMessage();
+        return;
+      }
+
+      openPhotoViewer();
+    }
+
+    photoCard.setAttribute("tabindex", "0");
+    photoCard.setAttribute("role", "button");
+    photoCard.setAttribute("aria-label", "Fotoğrafı büyüt");
+
+    photoCard.addEventListener("click", handlePhotoOpen);
+    photoCard.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handlePhotoOpen();
+      }
+    });
+
+    closePhotoViewer.addEventListener("click", closePhotoViewerModal);
+    photoZoomIn.addEventListener("click", () => setPhotoZoom(photoZoomLevel + 0.5));
+    photoZoomOut.addEventListener("click", () => setPhotoZoom(photoZoomLevel - 0.5));
+    photoZoomReset.addEventListener("click", () => setPhotoZoom(1));
+
+    photoViewerStage.addEventListener("click", event => {
+      const now = Date.now();
+
+      if (now - lastPhotoTapTime < 320) {
+        setPhotoZoom(photoZoomLevel === 1 ? 2 : 1);
+      }
+
+      lastPhotoTapTime = now;
+
+      if (event.target === photoViewerStage && photoZoomLevel === 1) {
+        closePhotoViewerModal();
+      }
+    });
+
+    photoViewer.addEventListener("wheel", event => {
+      event.preventDefault();
+      setPhotoZoom(photoZoomLevel + (event.deltaY < 0 ? 0.25 : -0.25));
+    }, { passive: false });
+
+    closeDayFourPhotoMessage.addEventListener("click", closeDayFourPhotoMessageModal);
+
+    showDayFourPhoto.addEventListener("click", () => {
+      dayFourPhotoMessageModal.hidden = true;
+      openPhotoViewer();
+    });
+
+    dayFourPhotoMessageModal.addEventListener("click", event => {
+      if (event.target === dayFourPhotoMessageModal) {
+        closeDayFourPhotoMessageModal();
+      }
+    });
+
+    function renderPhoto(day, date) {
+      photoCard.classList.remove("missing");
+      dayPhoto.alt = `${date.getDate()} ${turkishMonths[date.getMonth()]} için özel fotoğraf`;
+      photoCaption.textContent = day.photoCaption || "Bizden küçük bir anı 💗";
+      photoFallback.textContent = `${day.photo} dosyasının yerine kendi fotoğrafınızı koyabilirsin. 💗`;
+
+      dayPhoto.onload = () => {
+        photoCard.classList.remove("missing");
+      };
+
+      dayPhoto.onerror = () => {
+        photoCard.classList.add("missing");
+      };
+
+      dayPhoto.src = day.photo;
+    }
+
+    function getTodayPlanIndex() {
+      const today = normalizeDate(new Date());
+      const planStart = normalizeDate(PLAN_START_DATE);
+      const differenceInDays = Math.round((today - planStart) / 86400000);
+
+      return differenceInDays >= 0 && differenceInDays < planData.length
+        ? differenceInDays
+        : null;
+    }
+
+    function renderStartupMoodOptions(todayKey) {
+      startupMoodOptions.innerHTML = "";
+      startupMoodNote.textContent = "";
+      startupMoodNote.classList.remove("show");
+      startupMoodContinue.hidden = true;
+
+      moodOptions.forEach(mood => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "mood-button";
+        button.setAttribute("aria-label", mood.label);
+        button.setAttribute("aria-pressed", "false");
+        button.innerHTML = `
+          <span class="mood-emoji">${mood.emoji}</span>
+          <span class="mood-label">${mood.label}</span>
+        `;
+
+        button.addEventListener("click", () => {
+          tryStartBackgroundMusic();
+          appState.moods[todayKey] = mood.id;
+          saveState();
+
+          startupMoodOptions.querySelectorAll(".mood-button").forEach(option => {
+            option.classList.remove("selected");
+            option.setAttribute("aria-pressed", "false");
+          });
+
+          button.classList.add("selected");
+          button.setAttribute("aria-pressed", "true");
+          startupMoodIcon.textContent = mood.emoji;
+          startupMoodNote.textContent = mood.note;
+          startupMoodNote.classList.add("show");
+          startupMoodContinue.hidden = false;
+
+        });
+
+        startupMoodOptions.appendChild(button);
+      });
+    }
+
+    function showStartupMoodIfNeeded() {
+      const todayPlanIndex = getTodayPlanIndex();
+
+      if (todayPlanIndex === null) {
+        return;
+      }
+
+      const todayKey = dateKey(new Date());
+
+      if (appState.moods[todayKey]) {
+        return;
+      }
+
+      renderStartupMoodOptions(todayKey);
+      startupMoodModal.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function closeStartupMoodModal() {
+      startupMoodModal.hidden = true;
+      document.body.classList.remove("modal-open");
+    }
+
+    startupMoodContinue.addEventListener("click", closeStartupMoodModal);
+
+    function toggleTask(key, taskIndex) {
+      const day = planData[selectedDayIndex];
+      const current = new Set(appState.completed[key] || []);
+      const wasComplete = current.size === day.tasks.length;
+
+      if (current.has(taskIndex)) {
+        current.delete(taskIndex);
+      } else {
+        current.add(taskIndex);
+      }
+
+      const isNowComplete = current.size === day.tasks.length;
+      appState.completed[key] = Array.from(current).sort((a, b) => a - b);
+      saveState();
+      renderDayContent();
+
+      if (!wasComplete && isNowComplete) {
+        window.setTimeout(() => openCelebration(selectedDayIndex), 180);
+      }
+    }
+
+    function updateProgress(total, done) {
+      progressText.textContent = `${done}/${total}`;
+      const percentage = total ? (done / total) * 100 : 0;
+      progressFill.style.width = `${percentage}%`;
+      completionReveal.classList.toggle("show", total > 0 && done === total);
+    }
+
+    function openCelebration(dayIndex) {
+      const day = planData[dayIndex];
+      specialNote.textContent = day.surpriseNote;
+      surpriseIcon.textContent = getAnimationIcon(day.animation);
+      celebrationModal.hidden = false;
+      document.body.classList.add("modal-open");
+      runCelebrationEffect(day.animation);
+    }
+
+    function closeCelebrationModal() {
+      celebrationModal.hidden = true;
+      document.body.classList.remove("modal-open");
+      clearEffects();
+    }
+
+    function getAnimationIcon(animation) {
+      return {
+        hearts: "💗",
+        stars: "⭐",
+        cat: "🐱",
+        flowers: "🌸",
+        bubbles: "🫧"
+      }[animation] || "💌";
+    }
+
+    function runCelebrationEffect(type) {
+      clearEffects();
+
+      if (type === "stars") {
+        createStarBurst();
+      } else if (type === "cat") {
+        createCatEffect();
+      } else if (type === "flowers") {
+        createFallingParticles(["🌸", "🌷", "🌼", "💮"], 34);
+      } else if (type === "bubbles") {
+        createBubbles();
+      } else {
+        createFallingParticles(["💗", "💕", "💖", "♡"], 36);
+      }
+
+      effectTimeout = window.setTimeout(clearEffects, 5200);
+    }
+
+    function createFallingParticles(symbols, amount) {
+      for (let index = 0; index < amount; index++) {
+        const particle = document.createElement("span");
+        particle.className = "fall-particle";
+        particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        particle.style.setProperty("--left", `${Math.random() * 100}%`);
+        particle.style.setProperty("--size", `${16 + Math.random() * 24}px`);
+        particle.style.setProperty("--duration", `${2.6 + Math.random() * 2.1}s`);
+        particle.style.setProperty("--delay", `${Math.random() * 1.05}s`);
+        particle.style.setProperty("--drift", `${-80 + Math.random() * 160}px`);
+        particle.style.setProperty("--rotate", `${-280 + Math.random() * 560}deg`);
+        effectLayer.appendChild(particle);
+      }
+    }
+
+    function createStarBurst() {
+      const symbols = ["⭐", "✨", "🌟", "💫"];
+
+      for (let index = 0; index < 28; index++) {
+        const angle = (Math.PI * 2 * index) / 28 + Math.random() * 0.17;
+        const distance = 120 + Math.random() * 260;
+        const star = document.createElement("span");
+        star.className = "burst-star";
+        star.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        star.style.setProperty("--x", `${Math.cos(angle) * distance}px`);
+        star.style.setProperty("--y", `${Math.sin(angle) * distance}px`);
+        star.style.setProperty("--size", `${16 + Math.random() * 25}px`);
+        star.style.setProperty("--delay", `${Math.random() * 0.35}s`);
+        star.style.setProperty("--rotate", `${-220 + Math.random() * 440}deg`);
+        effectLayer.appendChild(star);
+      }
+
+      window.setTimeout(() => createStarBurst(), 950);
+    }
+
+    function createCatEffect() {
+      const cat = document.createElement("div");
+      cat.className = "cat-effect";
+      cat.innerHTML = `
+        <span class="cat-face">🐱</span>
+        <span class="cat-hearts">💗 💕 💗</span>
+      `;
+      effectLayer.appendChild(cat);
+
+      createFallingParticles(["✨", "💗"], 18);
+    }
+
+    function createBubbles() {
+      const symbols = ["🫧", "💗", "✨"];
+
+      for (let index = 0; index < 32; index++) {
+        const bubble = document.createElement("span");
+        bubble.className = "bubble-particle";
+        bubble.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        bubble.style.setProperty("--left", `${Math.random() * 100}%`);
+        bubble.style.setProperty("--size", `${16 + Math.random() * 29}px`);
+        bubble.style.setProperty("--duration", `${2.7 + Math.random() * 2.3}s`);
+        bubble.style.setProperty("--delay", `${Math.random() * 1.1}s`);
+        bubble.style.setProperty("--drift", `${-75 + Math.random() * 150}px`);
+        effectLayer.appendChild(bubble);
+      }
+    }
+
+    function clearEffects() {
+      if (effectTimeout) {
+        window.clearTimeout(effectTimeout);
+        effectTimeout = null;
+      }
+      effectLayer.innerHTML = "";
+    }
+
+    completionReveal.addEventListener("click", () => {
+      if (selectedDayIndex !== null) {
+        openCelebration(selectedDayIndex);
+      }
+    });
+
+    closeCelebration.addEventListener("click", closeCelebrationModal);
+    celebrationOk.addEventListener("click", closeCelebrationModal);
+
+    celebrationModal.addEventListener("click", event => {
+      if (event.target === celebrationModal) {
+        closeCelebrationModal();
+      }
+    });
+
+    function isRunningStandalone() {
+      return window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+    }
+
+    function showInstallHelp() {
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+      installHelpText.textContent = isIOS
+        ? "Safari'de alttaki Paylaş simgesine dokun.\nArdından “Ana Ekrana Ekle” seçeneğini seç."
+        : "Tarayıcı menüsünü aç ve “Uygulamayı yükle” veya “Ana ekrana ekle” seçeneğine dokun.";
+
+      installModal.hidden = false;
+      document.body.classList.add("modal-open");
+    }
+
+    function closeInstallModal() {
+      installModal.hidden = true;
+      document.body.classList.remove("modal-open");
+    }
+
+    window.addEventListener("beforeinstallprompt", event => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      installButton.hidden = false;
+    });
+
+    window.addEventListener("appinstalled", () => {
+      deferredInstallPrompt = null;
+      installButton.hidden = true;
+    });
+
+    installButton.addEventListener("click", async () => {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        return;
+      }
+
+      showInstallHelp();
+    });
+
+    closeInstall.addEventListener("click", closeInstallModal);
+    installOk.addEventListener("click", closeInstallModal);
+
+    installModal.addEventListener("click", event => {
+      if (event.target === installModal) {
+        closeInstallModal();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key !== "Escape") return;
+
+      if (!celebrationModal.hidden) {
+        closeCelebrationModal();
+      }
+
+      if (!installModal.hidden) {
+        closeInstallModal();
+      }
+
+      if (!lockedDayModal.hidden) {
+        closeLockedDayModal();
+      }
+
+      if (!dayFourPhotoMessageModal.hidden) {
+        closeDayFourPhotoMessageModal();
+      }
+
+      if (!photoViewer.hidden) {
+        closePhotoViewerModal();
+      }
+    });
+
+    if (!isRunningStandalone()) {
+      installButton.hidden = false;
+    }
+
+    if ("serviceWorker" in navigator && ["http:", "https:"].includes(location.protocol)) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(error => {
+          console.warn("Service worker kaydı başarısız:", error);
+        });
+      });
+    }
+
+    renderDays();
+    showStartupMoodIfNeeded();
+  </script>
+</body>
+</html>
